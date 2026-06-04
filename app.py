@@ -439,13 +439,16 @@ def get_vix_history_90d():
         return df
     except: return pd.DataFrame()
 
-def get_ticker_technicals(ticker: str, start: str, end: str):
+def get_ticker_technicals(ticker: str, start: str, end: str, preloaded_df=None):
     """Returns (df, ind_values, current_price) or (None, None, None)"""
     try:
-        result = fetch_history([ticker], start=start, end=end)
-        df = result.get(ticker)
+        if preloaded_df is not None:
+            df = preloaded_df.copy() if not preloaded_df.empty else None
+        else:
+            result = fetch_history([ticker], start=start, end=end)
+            df = result.get(ticker)
+            
         if df is None or len(df) < 252:
-            st.error(f"DEBUG get_ticker_technicals: df is None or len < 252 (len = {len(df) if df is not None else 'None'})")
             return None, None, None
         from lab.indicators import rsi, mfi, macd_hist, williams_r, adx
 
@@ -572,11 +575,9 @@ def get_fundamental_stars(ticker: str, tnx_yield: float, current_price: float, d
         return 0, [("Error de API (Yahoo bloqueó la conexión)", False)]
 
 def analyze_ticker_for_today(ticker: str, regime: str, tnx_yield: float,
-                             start: str, end: str, force_fundamental: bool = False, scan_mode: str = "DIP") -> dict | None:
+                             start: str, end: str, force_fundamental: bool = False, scan_mode: str = "DIP", preloaded_df=None) -> dict | None:
     try:
-        import time
-        time.sleep(1.0)
-        df, ind_vals, price = get_ticker_technicals(ticker, start, end)
+        df, ind_vals, price = get_ticker_technicals(ticker, start, end, preloaded_df)
         if df is None: return None
 
         ema_disc = ind_vals.get('EMA200_disc', float('nan'))
@@ -636,8 +637,6 @@ def analyze_ticker_for_today(ticker: str, regime: str, tnx_yield: float,
         stars = 0
         checks = []
         if is_fund_candidate or force_fundamental:
-            import time
-            time.sleep(0.5)
             stars, checks = get_fundamental_stars(ticker, tnx_yield, price, df=df, ind_vals=ind_vals, scan_mode=scan_mode)
 
         if scan_mode == "MOMENTUM":
@@ -1256,11 +1255,20 @@ if page == "📡 Radar S&P 500":
     def scan_worker(sid, tickers, current_regime, t_yield, s_date, e_date, mode_list):
         state = GLOBAL_SCANS[sid]
         
-        with ThreadPoolExecutor(max_workers=1) as ex:
+        # 1. BULK FETCH TÉCNICO (Elimina 500 requests individuales)
+        try:
+            from data.fetcher import fetch_history
+            bulk_data = fetch_history(tickers, start=s_date, end=e_date)
+        except Exception:
+            bulk_data = {}
+        
+        # 2. RUN WORKERS CONCURRENTE (x5 para acelerar Monte Carlo y Fundamental)
+        with ThreadPoolExecutor(max_workers=5) as ex:
             futures = {}
             for t in tickers:
                 for m in mode_list:
-                    futures[ex.submit(analyze_ticker_for_today, t, current_regime, t_yield, s_date, e_date, False, m)] = (t, m)
+                    preloaded_df = bulk_data.get(t)
+                    futures[ex.submit(analyze_ticker_for_today, t, current_regime, t_yield, s_date, e_date, False, m, preloaded_df)] = (t, m)
                        
             for fut in as_completed(futures):
                 if state['cancel']:
