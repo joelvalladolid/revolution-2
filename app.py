@@ -1234,7 +1234,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    page = st.radio("", ["📡 Radar S&P 500", "💰 Paso 2 — Cuánto Comprar",
+    page = st.radio("Navegación", ["📡 Radar S&P 500", "💰 Paso 2 — Cuánto Comprar",
                          "🔍 Análisis Individual",
                          "📊 Régimen de Mercado", "🔗 Correlación", "⚙️ Configuración", "🏥 Diagnóstico de Datos"],
                     label_visibility="collapsed")
