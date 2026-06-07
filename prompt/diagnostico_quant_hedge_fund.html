@@ -1,0 +1,315 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .page { padding: 1.5rem 0; max-width: 680px; }
+  .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 2rem 0 0.75rem; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+  .card-red { border-left: 3px solid #E24B4A; }
+  .card-amber { border-left: 3px solid #BA7517; }
+  .card-teal { border-left: 3px solid #0F6E56; }
+  .card-blue { border-left: 3px solid #185FA5; }
+  .card-purple { border-left: 3px solid #534AB7; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+  .badge-red { background: #FCEBEB; color: #A32D2D; }
+  .badge-amber { background: #FAEEDA; color: #854F0B; }
+  .badge-teal { background: #E1F5EE; color: #0F6E56; }
+  .badge-blue { background: #E6F1FB; color: #185FA5; }
+  .badge-purple { background: #EEEDFE; color: #534AB7; }
+  .badge-gray { background: #F1EFE8; color: #5F5E5A; }
+  @media (prefers-color-scheme: dark) {
+    .badge-red { background: #501313; color: #F09595; }
+    .badge-amber { background: #412402; color: #FAC775; }
+    .badge-teal { background: #04342C; color: #5DCAA5; }
+    .badge-blue { background: #042C53; color: #85B7EB; }
+    .badge-purple { background: #26215C; color: #AFA9EC; }
+    .badge-gray { background: #2C2C2A; color: #B4B2A9; }
+  }
+  .card-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .card-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.65; }
+  .card-body strong { color: var(--color-text-primary); font-weight: 500; }
+  .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 1rem 0; }
+  .metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; }
+  .metric-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+  .metric-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+  .funnel { margin: 1rem 0; }
+  .funnel-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .funnel-label { font-size: 12px; color: var(--color-text-secondary); width: 180px; flex-shrink: 0; }
+  .funnel-bar-wrap { flex: 1; background: var(--color-background-secondary); border-radius: 3px; height: 20px; overflow: hidden; }
+  .funnel-bar { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 500; transition: width 0.5s; }
+  .bar-gray { background: #D3D1C7; color: #444441; }
+  .bar-red { background: #F09595; color: #501313; }
+  .bar-amber { background: #FAC775; color: #412402; }
+  .bar-teal { background: #5DCAA5; color: #04342C; }
+  @media (prefers-color-scheme: dark) {
+    .bar-gray { background: #444441; color: #D3D1C7; }
+    .bar-red { background: #791F1F; color: #F7C1C1; }
+    .bar-amber { background: #633806; color: #FAC775; }
+    .bar-teal { background: #085041; color: #9FE1CB; }
+  }
+  .rx-block { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+  .rx-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .rx-num { width: 24px; height: 24px; border-radius: 50%; background: #185FA5; color: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+  .rx-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .rx-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.65; margin-left: 34px; }
+  .rx-body code { font-family: var(--font-mono); font-size: 11px; background: var(--color-background-tertiary); padding: 1px 5px; border-radius: 3px; color: var(--color-text-primary); }
+  .impact-pill { display: inline-block; font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 99px; margin-left: 6px; vertical-align: middle; }
+  .sep { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.5rem 0; }
+  .verdict { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-top: 1.5rem; }
+  .verdict-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+  .verdict-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; }
+  .btn { display: inline-block; margin-top: 12px; padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--color-text-primary); background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; }
+  .btn:hover { background: var(--color-background-secondary); }
+</style>
+
+<div class="page">
+
+  <p style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px;">DIAGNÓSTICO CLÍNICO — 5 de junio, 2026</p>
+  <h2 style="font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;">Francotirador de Liquidez</h2>
+  <p style="font-size:13px;color:var(--color-text-secondary);">Análisis de falla sistémica · Portafolio MOMENTUM/CALM · Pérdida intradía: −3.5%</p>
+
+  <div class="metric-row" style="margin-top:1.25rem;">
+    <div class="metric">
+      <div class="metric-label">Pérdida hoy</div>
+      <div class="metric-value" style="color:#E24B4A;">−3.5%</div>
+      <div class="metric-sub">Portafolio completo</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">S&P 500 hoy</div>
+      <div class="metric-value" style="color:#E24B4A;">−0.63%</div>
+      <div class="metric-sub">Benchmark</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Amplificación</div>
+      <div class="metric-value" style="color:#BA7517;">5.6×</div>
+      <div class="metric-sub">Tu caída vs mercado</div>
+    </div>
+  </div>
+
+  <p class="section-title">Causa raíz inmediata — qué pasó hoy</p>
+
+  <div class="card card-red">
+    <span class="badge badge-red">Causa directa #1 — Crítica</span>
+    <div class="card-title">Sesgo sectorial invisible en modo MOMENTUM</div>
+    <div class="card-body">
+      Broadcom (AVGO) publicó guía de chips AI por debajo de expectativas. <strong>El índice SOX de semiconductores cayó 5.2% en un solo día</strong>, su peor sesión desde comienzos de 2025. NVDA, AMD, MU, INTC y ARM bajaron entre 3% y 5% adicionales.<br><br>
+      Tu sistema en régimen CALM/MOMENTUM busca acciones <em>por encima de su EMA200 con buen RSI</em>. Después de meses de rally en AI, <strong>las acciones con mejor momentum técnico del S&P 500 eran precisamente semiconductores y tech AI</strong>. El scanner los seleccionó correctamente según sus reglas — pero concentró el portafolio en el sector que colapsó.
+    </div>
+  </div>
+
+  <div class="card card-amber">
+    <span class="badge badge-amber">Causa directa #2 — Estructural</span>
+    <div class="card-title">El cap sectorial del 30% no es protección, es permiso</div>
+    <div class="card-body">
+      Con un cap del 30% en tech y chips bajando 4–5%, la contribución máxima de ese sector a tu pérdida es <strong>−1.5% solo de tech</strong>. Si tuvieras otros sectores correlacionados (industriales tech-adjacent, growth, software), la caída se propaga. <br><br>
+      El problema: el cap fue diseñado para limitar concentración, pero no evalúa si ese 30% está en el sector más sobreextendido del mercado en ese momento.
+    </div>
+  </div>
+
+  <div class="card card-amber">
+    <span class="badge badge-amber">Causa directa #3 — Gap del modelo</span>
+    <div class="card-title">Monte Carlo no puede predecir shocks de earnings</div>
+    <div class="card-body">
+      Tu bootstrap Monte Carlo usa <strong>los últimos 252 días de retornos históricos</strong> para simular los próximos 5 días. El problema: AVGO subió consistentemente durante meses, por eso su distribución histórica mostraba alta probabilidad de ganancia.<br><br>
+      Un earnings miss es un <strong>evento de cola izquierda no capturado en el historial reciente</strong>. El modelo es correcto estadísticamente — pero asume que el pasado reciente predice el futuro, y un guidance negativo rompe esa continuidad de forma instantánea.
+    </div>
+  </div>
+
+  <hr class="sep">
+  <p class="section-title">Diagnóstico profundo — las 5 enfermedades del sistema</p>
+
+  <div class="card card-red">
+    <span class="badge badge-red">Enfermedad #1 — Raíz más profunda</span>
+    <div class="card-title">El sistema no mide riesgo de concentración temática</div>
+    <div class="card-body">
+      Tienes caps por ticker (15%) y por sector (30%), pero <strong>no por tema de inversión</strong>. "AI chips", "cloud", "semiconductores de memoria" son tres sectores distintos en Yahoo Finance, pero en realidad son un solo trade: el rally de AI 2025–2026.<br><br>
+      Cuando ese tema colapsa por un evento como AVGO, tus posiciones en NVDA (Technology), MU (Technology), AMD (Technology), AVGO (Technology) y potencialmente MSFT o GOOGL (también tech) caen en cadena. <strong>El sistema cree que diversificó; en realidad no lo hizo.</strong>
+    </div>
+  </div>
+
+  <div class="card card-red">
+    <span class="badge badge-red">Enfermedad #2 — Gap crítico</span>
+    <div class="card-title">El check "No en Euforia" solo aplica en modo DIP</div>
+    <div class="card-body">
+      Check #8: <code>posición_52_semanas &gt; 90% y RSI &gt; 75 → descartar</code>. Este check existe exactamente para el problema de hoy: stocks en máximos absolutos con valuaciones estiradas.<br><br>
+      <strong>Pero en modo MOMENTUM está desactivado.</strong> Es decir, tu sistema de MOMENTUM puede entrar en acciones que están en el 95% de su rango de 52 semanas con RSI de 72 — cerca del umbral pero sin activar el check — justo antes de un earnings crash. Esto es una contradicción lógica grave en el diseño.
+    </div>
+  </div>
+
+  <div class="card card-amber">
+    <span class="badge badge-amber">Enfermedad #3 — Señal ausente</span>
+    <div class="card-title">No hay calendario de earnings en el pipeline</div>
+    <div class="card-body">
+      El sistema analiza técnicos, fundamentales, y Monte Carlo — pero <strong>no sabe cuándo reporta cada empresa</strong>. Entrar en AVGO 48 horas antes de sus resultados con una posición MOMENTUM es asumir riesgo binario no cuantificado.<br><br>
+      Un earnings report puede mover una acción ±10–15% en horas. Monte Carlo con 252 días de historia ve ±1–2% como rango probable. La discrepancia es de un orden de magnitud.
+    </div>
+  </div>
+
+  <div class="card card-amber">
+    <span class="badge badge-amber">Enfermedad #4 — Asignación ciega al momentum</span>
+    <div class="card-title">Vol Parity asigna MÁS capital a acciones en rally</div>
+    <div class="card-body">
+      Tu allocator usa <code>raw_weight = 1.0 / vol_30d</code>. Una acción que ha estado subiendo suavemente durante meses tiene <strong>baja volatilidad histórica → recibe más capital</strong>. Pero baja volatilidad reciente en momentum = precio sobreextendido con riesgo asimétrico.<br><br>
+      En práctica: tu modelo asignó más dinero a las acciones de chips que menos se habían movido en 30 días — justo las que estaban "calmadas" antes de explotar hoy.
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <span class="badge badge-blue">Enfermedad #5 — Régimen mal calibrado</span>
+    <div class="card-title">VIX ≤ 20 = CALM, pero el mercado puede estar frágil</div>
+    <div class="card-body">
+      El VIX mide volatilidad implícita histórica reciente. <strong>Puede mantenerse bajo (15–18) mientras el mercado acumula riesgo de earnings o geopolítico.</strong> El régimen CALM activa el modo más agresivo del sistema (solo MOMENTUM, menos filtros) — pero CALM no significa "sin riesgo de caída".<br><br>
+      Hoy el VIX estaba en zona CALM mientras el SOX caía 5%. El régimen no detectó esa divergencia.
+    </div>
+  </div>
+
+  <hr class="sep">
+  <p class="section-title">El embudo de lo que falló hoy</p>
+
+  <div class="funnel">
+    <div class="funnel-row">
+      <div class="funnel-label">500 tickers escaneados</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar bar-gray" style="width:100%">500</div></div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Filtro técnico MOMENTUM</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar bar-gray" style="width:60%">~120</div></div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Filtro fundamental ≥5★</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar bar-amber" style="width:25%">~40</div></div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Monte Carlo aprobado</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar bar-amber" style="width:12%">~15</div></div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label" style="color:#E24B4A;font-weight:500;">Sin filtro anti-euforia ❌</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar bar-red" style="width:12%">~15 (sin cambio)</div></div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label" style="color:#E24B4A;font-weight:500;">Sin filtro earnings ❌</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar bar-red" style="width:12%">~15 (sin cambio)</div></div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label" style="color:#E24B4A;font-weight:500;">Sin diversificación temática ❌</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar bar-red" style="width:8%">concentrado</div></div>
+    </div>
+  </div>
+
+  <hr class="sep">
+  <p class="section-title">Prescripción — soluciones definitivas</p>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">1</div>
+      <div class="rx-title">Activar check anti-euforia en modo MOMENTUM <span class="impact-pill badge-red">Impacto alto</span></div>
+    </div>
+    <div class="rx-body">
+      Mover el check #8 de "solo DIP" a "DIP + MOMENTUM". Cualquier acción en el 90% superior de su rango de 52 semanas con RSI &gt; 72 se descarta también en MOMENTUM. Esto habría eliminado la mayoría de semiconductores AI del portafolio de hoy.<br><br>
+      Adicionalmente, añadir: <code>if BB_pctB &gt; 0.85 → descartar</code> como filtro duro en MOMENTUM. Precio tocando el techo de Bollinger es señal de sobreextensión, no de momentum saludable.
+    </div>
+  </div>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">2</div>
+      <div class="rx-title">Añadir filtro de calendario de earnings <span class="impact-pill badge-red">Impacto alto</span></div>
+    </div>
+    <div class="rx-body">
+      Antes de que un ticker pase al allocator, verificar si reporta earnings en los próximos <strong>5 días hábiles</strong>. Si sí, tiene dos opciones: descartarlo completamente, o reducir su peso al 50% del calculado por Vol Parity.<br><br>
+      <code>yfinance: tk.calendar</code> devuelve la fecha del próximo earnings. Es una llamada simple que ya está en el stack. Este filtro solo es necesario en modo MOMENTUM — en DIP el descuento ya amortiguaría parte del golpe.
+    </div>
+  </div>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">3</div>
+      <div class="rx-title">Implementar cap temático (no solo sectorial) <span class="impact-pill badge-amber">Impacto alto</span></div>
+    </div>
+    <div class="rx-body">
+      Crear un mapa de temas de inversión que agrupe sectores correlacionados. Ejemplo:<br><br>
+      — <strong>Tema "AI/Chips"</strong>: semiconductores, hardware AI, cloud infraestructura → cap 20%<br>
+      — <strong>Tema "Financiero"</strong>: bancos, seguros, fintech → cap 25%<br>
+      — <strong>Tema "Consumo defensivo"</strong>: utilities, staples, healthcare → cap 30%<br><br>
+      Esto fuerza diversificación real entre narrativas de mercado, no solo entre categorías Yahoo Finance.
+    </div>
+  </div>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">4</div>
+      <div class="rx-title">Mejorar Monte Carlo: añadir simulación de shock de earnings <span class="impact-pill badge-amber">Impacto medio-alto</span></div>
+    </div>
+    <div class="rx-body">
+      Al bootstrap actual, añadir un segundo escenario: con probabilidad proporcional a la frecuencia histórica de earnings surprises negativos del sector (≈ 25–30% de reportes), inyectar un retorno de −8% a −15% en uno de los 5 días simulados.<br><br>
+      Esto produce un P10 más realista para acciones cercanas a earnings. Si el nuevo P10 baja de −12%, el ticker se descarta o recibe peso reducido.
+    </div>
+  </div>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">5</div>
+      <div class="rx-title">Reemplazar Vol Parity puro por Vol Parity ajustado por extensión <span class="impact-pill badge-amber">Impacto medio</span></div>
+    </div>
+    <div class="rx-body">
+      La fórmula actual: <code>weight = 1 / vol_30d</code>. Propuesta:<br><br>
+      <code>extension_penalty = max(0, (BB_pctB - 0.6) × 2)</code><br>
+      <code>adjusted_weight = (1 / vol_30d) × (1 - extension_penalty)</code><br><br>
+      Acciones en el 80%+ de Bollinger reciben hasta 40% menos capital. Esto reduce orgánicamente la exposición a momentum sobreextendido sin descartar el ticker completamente.
+    </div>
+  </div>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">6</div>
+      <div class="rx-title">Añadir régimen CALM-FRAGILE como estado intermedio <span class="impact-pill badge-blue">Impacto estructural</span></div>
+    </div>
+    <div class="rx-body">
+      El VIX puede estar en 17 mientras el mercado acumula riesgo. Crear una detección de "CALM pero frágil" basada en señales adicionales:<br><br>
+      — VIX flat pero el SOX o el sector tech bajó &gt; 3% en los últimos 3 días<br>
+      — Más del 40% de las señales MOMENTUM son del mismo tema<br>
+      — Hay 3+ empresas con earnings en la próxima semana en el portafolio<br><br>
+      Si se activan 2 de estas 3 condiciones → entrar en modo CALM-FRAGILE: reducir caps por ticker a 10%, activar todos los checks DIP también en MOMENTUM, y reducir multiplicador de régimen a 75%.
+    </div>
+  </div>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">7</div>
+      <div class="rx-title">Añadir ADX como filtro de agotamiento de tendencia <span class="impact-pill badge-blue">Impacto medio</span></div>
+    </div>
+    <div class="rx-body">
+      Ya calculas el ADX. Úsalo activamente en MOMENTUM:<br><br>
+      <code>if ADX &gt; 45 and RSI &gt; 65 → sobreextendido, descartar</code><br><br>
+      ADX &gt; 45 indica tendencia muy fuerte pero históricamente cerca de agotamiento. Combinado con RSI alto, es la firma técnica de un trade que ya hizo su recorrido.
+    </div>
+  </div>
+
+  <div class="rx-block">
+    <div class="rx-header">
+      <div class="rx-num">8</div>
+      <div class="rx-title">Diversificación mínima forzada en el allocator <span class="impact-pill badge-teal">Mantenimiento</span></div>
+    </div>
+    <div class="rx-body">
+      En <code>daily_allocator.py</code>, antes de asignar capital, verificar:<br><br>
+      — Mínimo 3 sectores distintos representados<br>
+      — Ningún sector &gt; 25% del portafolio final (bajar de 30%)<br>
+      — Si no se cumplen, tomar solo las top 2 señales por sector y completar con las siguientes señales de otros sectores aunque tengan menor score
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <div class="verdict">
+    <div class="verdict-title">Veredicto del doctor financiero</div>
+    <div class="verdict-body">
+      Tu sistema <strong>no está roto</strong> — está incompleto. Los filtros que tiene son sólidos y la lógica es correcta. Lo que falló hoy es que el sistema fue diseñado para mercados con volatilidad distribuida, no para mercados donde el momentum se concentra en un solo tema (AI chips) que colapsa por un evento binario (earnings).<br><br>
+      La raíz última del problema es una: <strong>el sistema maximiza momentum sin medir concentración temática ni riesgo de evento</strong>. Las soluciones 1, 2 y 3 son las más urgentes — implementadas juntas, habrían reducido tu pérdida de hoy a probablemente −0.8% a −1.2%, en línea con el mercado o mejor.<br><br>
+      Las soluciones 4–8 son mejoras estructurales que hacen el sistema robusto para el siguiente evento similar. Ninguna requiere cambiar la lógica central del scanner — solo añaden capas de protección que hoy estaban ausentes.
+    </div>
+    <button class="btn" onclick="sendPrompt('Escríbeme el código Python completo para implementar el filtro de calendario de earnings y el check anti-euforia en modo MOMENTUM')">Implementar soluciones en código ↗</button>
+  </div>
+
+</div>

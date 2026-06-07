@@ -1,0 +1,294 @@
+
+<style>
+  .wrap { padding: 1rem 0; font-size: 13px; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 1.5rem 0 0.6rem; }
+  .row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border-radius: var(--border-radius-md); margin-bottom: 6px; border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); }
+  .row:hover { background: var(--color-background-secondary); cursor: pointer; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .dot-green { background: #1D9E75; }
+  .dot-amber { background: #EF9F27; }
+  .dot-red { background: #E24B4A; }
+  .dot-blue { background: #378ADD; }
+  .label { font-weight: 500; color: var(--color-text-primary); flex: 1; min-width: 0; }
+  .desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.5; }
+  .pill { display: inline-block; font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 99px; margin-left: 6px; vertical-align: middle; flex-shrink: 0; }
+  .pill-green { background: #E1F5EE; color: #0F6E56; }
+  .pill-amber { background: #FAEEDA; color: #854F0B; }
+  .pill-red { background: #FCEBEB; color: #A32D2D; }
+  .pill-blue { background: #E6F1FB; color: #185FA5; }
+  @media (prefers-color-scheme: dark) {
+    .pill-green { background: #04342C; color: #5DCAA5; }
+    .pill-amber { background: #412402; color: #FAC775; }
+    .pill-red { background: #501313; color: #F09595; }
+    .pill-blue { background: #042C53; color: #85B7EB; }
+  }
+  .impact-bar { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .bar-track { flex: 1; height: 4px; background: var(--color-background-secondary); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-label { font-size: 10px; color: var(--color-text-tertiary); min-width: 70px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--color-text-secondary); }
+  .summary-box { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-top: 1.5rem; }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 0.75rem; }
+  .sum-cell { text-align: center; }
+  .sum-num { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .sum-lbl { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+</style>
+<div class="wrap">
+  <div class="legend">
+    <div class="leg-item"><div class="dot dot-green"></div> Ya tienes</div>
+    <div class="leg-item"><div class="dot dot-amber"></div> Tienes pero incompleto</div>
+    <div class="leg-item"><div class="dot dot-red"></div> No tienes — crítico</div>
+    <div class="leg-item"><div class="dot dot-blue"></div> No tienes — mejora</div>
+  </div>
+
+  <div class="section-label">Capa 1 — Universo y datos</div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento el filtro de earnings calendar en mi sistema?')">
+    <div class="dot dot-green" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">500 tickers S&P 500 desde Wikipedia</span><span class="pill pill-green">✓ completo</span></div>
+      <div class="desc">Con fallback hardcodeado. Funciona bien.</div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento el filtro de earnings calendar en mi sistema?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Filtro de calendario de earnings</span><span class="pill pill-red">falta — crítico</span></div>
+      <div class="desc">Tu diagnóstico muestra que AVGO destruyó el portafolio por earnings. yfinance ya tiene tk.calendar. Descartar o reducir peso 50% si hay earnings en 5 días.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:95%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo creo un universo reducido de 35 tickers líquidos para intraday?')">
+    <div class="dot dot-amber" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Filtro de liquidez y ATR mínimo</span><span class="pill pill-amber">parcial</span></div>
+      <div class="desc">Tienes volumen > 300K pero para next-day necesitas > 5M de volumen diario y ATR% > 1.5% para cubrir fricciones.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:60%;background:#EF9F27"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Capa 2 — Detección de régimen</div>
+
+  <div class="row">
+    <div class="dot dot-green" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">VIX → CALM / SLOW_BEAR / FAST_CRASH</span><span class="pill pill-green">✓ completo</span></div>
+      <div class="desc">Sólido. Umbrales correctos. Ajusta caps y modos automáticamente.</div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento el régimen CALM-FRAGILE en mi sistema?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Régimen CALM-FRAGILE</span><span class="pill pill-red">falta — crítico</span></div>
+      <div class="desc">Tu diagnóstico lo detectó: VIX=17 pero SOX bajó 5.2%. Añadir estado intermedio: si sector tech bajó >3% en 3 días, o >40% señales son del mismo tema, reducir caps a 10% y activar todos los checks DIP.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo añado el yield TNX como filtro adicional de régimen?')">
+    <div class="dot dot-green" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">TNX yield como modulador de PEG</span><span class="pill pill-green">✓ completo</span></div>
+      <div class="desc">Cuando TNX > 4.5% endurece los límites de valoración. Correcto.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Capa 3 — Filtros técnicos</div>
+
+  <div class="row">
+    <div class="dot dot-green" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">8 indicadores técnicos</span><span class="pill pill-green">✓ completo</span></div>
+      <div class="desc">EMA200, Bollinger %B, RSI, Stochastic K, MFI, MACD histogram, Williams %R, ADX. Pipeline sólido.</div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo activo el check anti-euforia en modo MOMENTUM?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Check anti-euforia en MOMENTUM</span><span class="pill pill-red">falta — crítico</span></div>
+      <div class="desc">El check #8 solo aplica en DIP. En MOMENTUM no filtra acciones en el 90% de su rango 52sem con RSI>72. Esto fue la causa directa #1 del diagnóstico. Mover a DIP+MOMENTUM.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:95%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo añado el filtro BB_pctB > 0.85 en modo MOMENTUM?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Filtro Bollinger sobreextensión</span><span class="pill pill-red">falta — crítico</span></div>
+      <div class="desc">Si BB_pctB > 0.85 → descartar en MOMENTUM. Precio tocando el techo de Bollinger = sobreextensión, no momentum saludable.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo uso el ADX como filtro de agotamiento de tendencia?')">
+    <div class="dot dot-amber" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">ADX como filtro activo</span><span class="pill pill-amber">calculado pero no usado</span></div>
+      <div class="desc">Calculas ADX pero no lo aplicas como filtro. Añadir: si ADX > 45 y RSI > 65 → descartar. Tendencia agotada.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:#EF9F27"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Capa 4 — Análisis fundamental</div>
+
+  <div class="row">
+    <div class="dot dot-green" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">16 checks fundamentales</span><span class="pill pill-green">✓ completo</span></div>
+      <div class="desc">Pipeline sólido. PEG, FCF, ROIC, anti-dilución, accruals, goodwill. Exenciones sectoriales correctas.</div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento el cap temático AI/Chips separado del cap sectorial?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Cap temático (AI/Chips, Financiero, Defensivo)</span><span class="pill pill-red">falta — crítico</span></div>
+      <div class="desc">Solo tienes cap sectorial 30%. El diagnóstico muestra que semiconductores + hardware AI + cloud son el mismo tema pero distintos sectores Yahoo. Cap temático AI/Chips al 20%.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Capa 5 — Monte Carlo</div>
+
+  <div class="row">
+    <div class="dot dot-green" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Bootstrap Monte Carlo 10K trayectorias</span><span class="pill pill-green">✓ base sólida</span></div>
+      <div class="desc">Bootstrap con fat tails reales. Buena base. Horizonte actual: 5 días.</div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo cambio el Monte Carlo de 5 días a 1 día con GARCH?')">
+    <div class="dot dot-amber" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Horizonte 1 día + GARCH(1,1)</span><span class="pill pill-amber">mejora necesaria</span></div>
+      <div class="desc">Cambiar simulación de 5→1 día. Añadir GARCH para escalar σ² según volatilidad actual. Output: P(>1%) mañana ajustado a las condiciones de hoy.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:75%;background:#EF9F27"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo añado simulación de shock de earnings al Monte Carlo?')">
+    <div class="dot dot-blue" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Shock de earnings en Monte Carlo</span><span class="pill pill-blue">mejora estructural</span></div>
+      <div class="desc">Con probabilidad 25-30% inyectar retorno de -8% a -15% en la simulación para acciones con earnings próximos. P10 más realista.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:70%;background:#378ADD"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento EVT para calibrar el stop-loss óptimo?')">
+    <div class="dot dot-blue" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">EVT (Extreme Value Theory) para stops</span><span class="pill pill-blue">mejora</span></div>
+      <div class="desc">Distribución Pareto Generalizada en la cola izquierda. Stop calibrado para que P(precio llega ahí) < 5% en la sesión. Más preciso que ATR×factor fijo.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:60%;background:#378ADD"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Capa 6 — Asignación de capital</div>
+
+  <div class="row">
+    <div class="dot dot-green" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Vol Parity + Kelly + Equal Weight fallback</span><span class="pill pill-green">✓ completo</span></div>
+      <div class="desc">Cascada correcta. Cap por ticker y sectorial implementados.</div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento Vol Parity ajustado por extensión de Bollinger?')">
+    <div class="dot dot-amber" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Vol Parity ajustado por extensión</span><span class="pill pill-amber">mejora recomendada</span></div>
+      <div class="desc">Fórmula actual: 1/vol. Propuesta: (1/vol) × (1 - penalty_BB). Acciones en Bollinger >80% reciben hasta 40% menos capital orgánicamente.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:65%;background:#EF9F27"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento sizing por riesgo fijo 1% en el allocator?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Sizing por riesgo fijo (1% del capital)</span><span class="pill pill-red">falta</span></div>
+      <div class="desc">No tienes límite de pérdida por operación. Tamaño = riesgo_max / stop_distance. Con $5K: riesgo max $50 por trade, máximo 2 posiciones simultáneas.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento diversificación mínima forzada en el allocator?')">
+    <div class="dot dot-amber" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Diversificación mínima forzada</span><span class="pill pill-amber">parcial</span></div>
+      <div class="desc">Tienes cap sectorial 30% pero no verificas mínimo de sectores distintos. Añadir: mínimo 3 sectores distintos, ninguno >25%, tomar top 2 por sector si no se cumple.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:70%;background:#EF9F27"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Capa 7 — Gestión de salida (no existe)</div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento trailing stop dinámico basado en ATR?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Trailing stop dinámico (ATR × 1.5)</span><span class="pill pill-red">no existe</span></div>
+      <div class="desc">Una vez que la posición sube 1% → stop a breakeven. Sube 2% → stop = precio - ATR×1.5. Se mueve solo hacia arriba.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento salida automática por tiempo y por evento VIX?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Salida por tiempo y por evento VIX</span><span class="pill pill-red">no existe</span></div>
+      <div class="desc">Si a las 3PM la posición no llegó al target → cerrar. Si VIX sube >15% intradía → salir inmediatamente, el régimen cambió.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento el stop diario de pérdida y ganancia máxima?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Stop diario -2% / +4%</span><span class="pill pill-red">no existe</span></div>
+      <div class="desc">Límite de pérdida diaria: si pierdes 2% del capital total en el día → no abrir nuevas posiciones. Si ganas 4% → proteger y parar.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Capa 8 — Aprendizaje y ML</div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento el sistema de logging de señales con resultado real?')">
+    <div class="dot dot-red" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">Log de señales con resultado real</span><span class="pill pill-red">no existe</span></div>
+      <div class="desc">Guardar por cada señal: ticker, fecha, precio entrada, stop, target, prob_MC, estrellas, régimen, resultado real, retorno%. Base para calibración y ML futuro.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:70%;background:#E24B4A"></div></div></div>
+    </div>
+  </div>
+
+  <div class="row" onclick="sendPrompt('Cómo implemento XGBoost como filtro adicional sobre las señales del scanner?')">
+    <div class="dot dot-blue" style="margin-top:5px"></div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center"><span class="label">XGBoost supervisado (con 200+ señales)</span><span class="pill pill-blue">futuro — 3-4 meses</span></div>
+      <div class="desc">Necesitas acumular datos reales primero. Con 200+ trades históricos: XGBoost aprende qué combinación de variables predice mejor el resultado real, no teórico.</div>
+      <div class="impact-bar"><span class="bar-label">Impacto</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:#378ADD"></div></div></div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">Resumen del sistema</div>
+    <div class="summary-grid">
+      <div class="sum-cell"><div class="sum-num" style="color:#1D9E75">7</div><div class="sum-lbl">Ya tienes</div></div>
+      <div class="sum-cell"><div class="sum-num" style="color:#EF9F27">5</div><div class="sum-lbl">Incompleto</div></div>
+      <div class="sum-cell"><div class="sum-num" style="color:#E24B4A">10</div><div class="sum-lbl">Falta crítico</div></div>
+      <div class="sum-cell"><div class="sum-num" style="color:#378ADD">3</div><div class="sum-lbl">Mejora futura</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-top:0.75rem;line-height:1.6">
+      Los 4 críticos que más impacto tienen hoy: <strong style="color:var(--color-text-primary)">check anti-euforia en MOMENTUM</strong>, <strong style="color:var(--color-text-primary)">filtro de earnings calendar</strong>, <strong style="color:var(--color-text-primary)">cap temático AI/Chips</strong>, y <strong style="color:var(--color-text-primary)">motor de salida completo</strong>. Implementados juntos habrían reducido tu pérdida de −3.5% a probablemente −0.7%.
+    </div>
+    <div style="margin-top:10px">
+      <button style="font-size:12px;padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);cursor:pointer" onclick="sendPrompt('Implementa los 4 cambios más críticos: check anti-euforia en MOMENTUM, filtro earnings calendar, cap temático y stop diario. Dame el código Python completo para cada archivo.')">Implementar los 4 críticos ahora →</button>
+    </div>
+  </div>
+</div>
